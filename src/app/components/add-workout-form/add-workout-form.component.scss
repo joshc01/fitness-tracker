@@ -1,0 +1,18 @@
+@import 'primeflex/primeflex.scss';
+
+:host {
+    @include styleclass('flex flex-column p-4')
+}
+
+.form {
+    @include styleclass('flex flex-column my-4');
+}
+
+.form {
+    @include styleclass('row-gap-6');
+
+    &-calculation {
+        @include styleclass('flex flex-row align-items-center column-gap-2')
+    }
+
+}

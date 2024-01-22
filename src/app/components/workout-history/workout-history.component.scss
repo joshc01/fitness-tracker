@@ -1,0 +1,9 @@
+@import 'primeflex/primeflex.scss';
+
+.table {
+    @include styleclass('w-6 my-4');
+
+    &-caption {
+        @include styleclass('flex align-items-center justify-content-between')
+    }
+}

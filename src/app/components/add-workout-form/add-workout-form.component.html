@@ -1,0 +1,61 @@
+<form [formGroup]="addWorkoutFormGroup" class="form">
+    <span class="p-float-label">
+        <p-calendar
+            dateFormat="D m/d/y"
+            formControlName="date"
+            [iconDisplay]="'input'"
+            id="workout-date"
+            inputId="workout-date"
+            [readonlyInput]="true"
+            [showIcon]="true"
+            [showButtonBar]="true"
+        ></p-calendar>
+        <label for="workout-date">Workout date</label>
+    </span>
+
+    <span class="p-float-label">
+        <p-dropdown
+            [editable]="true"
+            formControlName="workoutType"
+            id="workoutType"
+            inputId="workoutType"
+            placeholder="Select a Workout Type"
+            [options]="workoutTypeOptions"
+        />
+        <label for="workoutType">Workout Type</label>
+    </span>
+
+    <span class="p-float-label">
+        <p-dropdown
+            [editable]="true"
+            formControlName="exercise"
+            id="exercise"
+            inputId="exercise"
+            [options]="exerciseOptions"
+            placeholder="Select an Exercise"
+        />
+        <label for="exercise">Exercise</label>
+    </span>
+
+    <div class="form-calculation">
+        <span class="p-float-label">
+            <p-inputNumber
+                id="sets"
+                inputId="sets"
+                formControlName="sets"
+                [ngClass]="{
+                    'ng-invalid': addWorkoutFormGroup.controls.sets.invalid,
+                    'ng-dirty': addWorkoutFormGroup.controls.sets.dirty
+                }"
+            ></p-inputNumber>
+            <label for="sets">Sets</label>
+        </span>
+        <i class="pi pi-times"></i>
+        <span class="p-float-label">
+            <p-inputNumber formControlName="reps" id="reps" inputId="reps"></p-inputNumber>
+            <label for="reps">Reps</label>
+        </span>
+    </div>
+</form>
+
+<p-button (onClick)="saveWorkout()">Save</p-button>

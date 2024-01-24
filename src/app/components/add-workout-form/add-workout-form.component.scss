@@ -1,7 +1,7 @@
 @import 'primeflex/primeflex.scss';
 
 :host {
-    @include styleclass('flex flex-column p-4')
+    @include styleclass('flex flex-column mt-4')
 }
 
 .form {

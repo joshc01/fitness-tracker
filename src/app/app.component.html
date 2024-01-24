@@ -4,16 +4,16 @@
     </ng-template>
     <ng-template pTemplate="center">
         <div class="toolbar-center">
-            <a [routerLink]="['/home']" pButton>
+            <a [routerLink]="['/home']" pButton pTooltip="Home" tooltipPosition="bottom">
                 <i class="pi pi-home"></i>
             </a>
-            <a [routerLink]="['/add-workout']" pButton>
+            <a [routerLink]="['/add-workout']" pButton pTooltip="Add Workout" tooltipPosition="bottom">
                 <i class="pi pi-pencil"></i>
             </a>
-            <a [routerLink]="['/workout-history']" pButton>
+            <a [routerLink]="['/workout-history']" pButton pTooltip="Workout History" tooltipPosition="bottom">
                 <i class="pi pi-book"></i>
             </a>
-            <a [routerLink]="['/personal-records']" pButton>
+            <a [routerLink]="['/personal-records']" pButton pTooltip="Personal Records" tooltipPosition="bottom">
                 <i class="pi pi-sort-numeric-up-alt"></i>
             </a>
         </div>

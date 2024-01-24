@@ -1,7 +1,11 @@
 @import 'primeflex/primeflex.scss';
 
+:host {
+    @include styleclass('block, mt-4')
+}
+
 .table {
-    @include styleclass('w-6 my-4');
+    @include styleclass('w-full my-4');
 
     &-caption {
         @include styleclass('flex align-items-center justify-content-between')

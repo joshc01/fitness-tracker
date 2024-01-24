@@ -12,6 +12,8 @@ export type Exercise = {
     weight: number;
 };
 
+//TODO: Map enums to strings for display rather than using pipes in template
+
 export enum WorkoutType {
     UPPER_BODY = 'UPPER_BODY',
     LOWER_BODY = 'LOWER_BODY'
@@ -19,7 +21,8 @@ export enum WorkoutType {
 
 export enum ExerciseName {
     CRUNCHES = 'CRUNCHES',
-    CALF_RAISES = 'CALF_RAISES'
+    CALF_RAISES = 'CALF_RAISES',
+    CHEST_PRESS = 'CHEST_PRESS'
 }
 
 export enum ExerciseFocus {
@@ -35,3 +38,7 @@ export enum ExerciseFocus {
     SHOULDERS = 'SHOULDERS',
     TRICEPS = 'TRICEPS'
 }
+
+export type ExerciseRecord = Exercise & {
+    date: Date;
+};

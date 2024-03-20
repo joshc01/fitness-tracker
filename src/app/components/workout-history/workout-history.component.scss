@@ -4,6 +4,10 @@
     @include styleclass('block, mt-4')
 }
 
+.history-page {
+    @include styleclass('flex flex-column row-gap-4')
+}
+
 .table {
     @include styleclass('w-full my-4');
 

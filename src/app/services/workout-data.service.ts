@@ -1,74 +1,35 @@
 import { Injectable } from '@angular/core';
-import { ExerciseFocus, ExerciseName, Workout, WorkoutType } from '../types/workout';
-import { Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { WorkoutDO } from '../database/types/workout-DO';
+import { Workout } from '../types/workout';
+import { mapDOToWorkout, mapWorkoutToDO } from '../mappers/workout.mapper';
 
 @Injectable({
     providedIn: 'root'
 })
 export class WorkoutDataService {
-    getAllWorkouts(): Observable<Workout[]> {
-        const fakeData: Workout[] = [
-            {
-                type: WorkoutType.UPPER_BODY,
-                exercises: [
-                    {
-                        name: ExerciseName.CRUNCHES,
-                        focus: ExerciseFocus.CORE,
-                        sets: 3,
-                        reps: 10,
-                        weight: 50
-                    },
-                    {
-                        name: ExerciseName.CHEST_PRESS,
-                        focus: ExerciseFocus.CHEST,
-                        sets: 4,
-                        reps: 12,
-                        weight: 120
-                    }
-                ],
-                date: new Date()
-            },
-            {
-                type: WorkoutType.UPPER_BODY,
-                exercises: [
-                    {
-                        name: ExerciseName.CRUNCHES,
-                        focus: ExerciseFocus.CORE,
-                        sets: 3,
-                        reps: 15,
-                        weight: 80
-                    }
-                ],
-                date: new Date(2024, 0, 20)
-            },
-            {
-                type: WorkoutType.LOWER_BODY,
-                exercises: [
-                    {
-                        name: ExerciseName.CALF_RAISES,
-                        focus: ExerciseFocus.CALVES,
-                        sets: 5,
-                        reps: 12,
-                        weight: 0
-                    }
-                ],
-                date: new Date(2024, 0, 10)
-            },
-            {
-                type: WorkoutType.LOWER_BODY,
-                exercises: [
-                    {
-                        name: ExerciseName.CALF_RAISES,
-                        focus: ExerciseFocus.CALVES,
-                        sets: 4,
-                        reps: 8,
-                        weight: 50
-                    }
-                ],
-                date: new Date(2024, 0, 20)
-            }
-        ];
+    private workoutsDOCollection: AngularFirestoreCollection<WorkoutDO>;
+    private workoutsDO$: Observable<WorkoutDO[]>;
 
-        return of(fakeData);
+    workouts$: Observable<Workout[]>;
+
+    constructor(private angularFirestore: AngularFirestore) {
+        this.workoutsDOCollection = angularFirestore.collection<WorkoutDO>('workouts');
+        this.workoutsDO$ = this.workoutsDOCollection.valueChanges();
+        this.workouts$ = this.workoutsDO$.pipe(
+            map((workoutsDO) => workoutsDO.map((workoutDO) => mapDOToWorkout(workoutDO)))
+        );
+    }
+
+    //TODO: Add document id when added as value for 'id' field
+    create(workout: Workout) {
+        const workoutDO = mapWorkoutToDO(workout);
+
+        return this.workoutsDOCollection.add({ ...workoutDO, id: this.workoutsDOCollection.ref.doc().id });
+    }
+
+    delete(id: string) {
+        return this.workoutsDOCollection.doc(id).delete();
     }
 }

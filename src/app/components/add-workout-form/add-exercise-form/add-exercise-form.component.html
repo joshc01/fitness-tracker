@@ -1,0 +1,64 @@
+<form [formGroup]="addExerciseFormGroup" class="form">
+    <span class="p-float-label">
+        <p-dropdown
+            [editable]="true"
+            formControlName="name"
+            id="name"
+            inputId="exercise"
+            [ngClass]="{ 'ng-invalid ng-dirty': addExerciseFormGroup.controls.name.invalid && isSaveClicked }"
+            [options]="nameOptions"
+            placeholder="Select an Exercise"
+            [required]="true"
+        />
+        <label for="name">Exercise</label>
+    </span>
+
+    <span class="p-float-label">
+        <p-dropdown
+            [editable]="true"
+            formControlName="focus"
+            id="focus"
+            inputId="exercise"
+            [ngClass]="{ 'ng-invalid ng-dirty': addExerciseFormGroup.controls.focus.invalid && isSaveClicked }"
+            [options]="focusOptions"
+            placeholder="Select a Focus"
+            [required]="true"
+        />
+        <label for="focus">Focus</label>
+    </span>
+
+    <div class="form-calculation">
+        <span class="p-float-label">
+            <p-inputNumber
+                id="sets"
+                inputId="sets"
+                formControlName="sets"
+                [ngClass]="{ 'ng-invalid ng-dirty': addExerciseFormGroup.controls.sets.invalid && isSaveClicked }"
+                [required]="true"
+            ></p-inputNumber>
+            <label for="sets">Sets</label>
+        </span>
+        <i class="pi pi-times"></i>
+        <span class="p-float-label">
+            <p-inputNumber
+                formControlName="reps"
+                id="reps"
+                inputId="reps"
+                [ngClass]="{ ' ng-dirty': addExerciseFormGroup.controls.sets.invalid && isSaveClicked }"
+                [required]="true"
+            ></p-inputNumber>
+            <label for="reps">Reps</label>
+        </span>
+    </div>
+
+    <span class="p-float-label">
+        <p-inputNumber
+            id="weight"
+            inputId="weight"
+            formControlName="weight"
+            [ngClass]="{ 'ng-invalid ng-dirty': addExerciseFormGroup.controls.weight.invalid && isSaveClicked }"
+            [required]="true"
+        ></p-inputNumber>
+        <label for="weight">Weight</label>
+    </span>
+</form>

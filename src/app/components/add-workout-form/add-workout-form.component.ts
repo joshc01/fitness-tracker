@@ -1,13 +1,23 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
-import { NgClass } from '@angular/common';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
-import { Exercise, ExerciseName, Workout, WorkoutType } from '../../types/workout';
+import { Workout } from '../../types/workout';
 import { CalendarModule } from 'primeng/calendar';
+import { WorkoutDataService } from '../../services/workout-data.service';
+import { AddExerciseFormComponent } from './add-exercise-form/add-exercise-form.component';
+import { WorkoutType } from '../../types/enums/workout-type';
+import { uid } from 'uid';
+import { Exercise } from '../../types/exercise';
 
+export type WorkoutData = {
+    date: Workout['date'];
+    type: Workout['type'] | null;
+    exercises: Workout['exercises'];
+};
 @Component({
     selector: 'app-add-workout-form',
     standalone: true,
@@ -18,24 +28,56 @@ import { CalendarModule } from 'primeng/calendar';
         ButtonModule,
         NgClass,
         DropdownModule,
-        CalendarModule
+        CalendarModule,
+        AddExerciseFormComponent,
+        NgIf,
+        AsyncPipe,
+        NgForOf
     ],
     templateUrl: './add-workout-form.component.html',
     styleUrl: './add-workout-form.component.scss'
 })
 export class AddWorkoutFormComponent {
+    //TODO: Fix 'exercises' FormArray to work with add-exercise-form CVA
     addWorkoutFormGroup = new FormGroup({
-        date: new FormControl<Workout['date'] | null>(null),
-        workoutType: new FormControl<Workout['type'] | null>(null),
-        exercise: new FormControl<Exercise['name'] | null>(null),
-        sets: new FormControl<Exercise['sets'] | null>(null),
-        reps: new FormControl<Exercise['reps'] | null>(null)
+        date: new FormControl<WorkoutData['date']>(new Date(), {
+            validators: Validators.required,
+            nonNullable: true
+        }),
+        type: new FormControl<WorkoutData['type']>(null, { validators: Validators.required }),
+        exercises: new FormArray<FormControl<Exercise>>([], { validators: Validators.required })
     });
 
-    exerciseOptions = [ExerciseName.CRUNCHES];
-    workoutTypeOptions = [WorkoutType.UPPER_BODY, WorkoutType.LOWER_BODY];
+    workoutTypeOptions = Object.values(WorkoutType).filter((val) => isNaN(Number(val)));
+    isSaveClicked = false;
+
+    constructor(private workoutDataService: WorkoutDataService) {}
+
+    addExercise() {
+        this.addWorkoutFormGroup.controls.exercises.push(new FormControl());
+    }
+
+    deleteExercise(index: number) {
+        this.addWorkoutFormGroup.controls.exercises.removeAt(index);
+    }
 
     saveWorkout() {
-        console.log(this.addWorkoutFormGroup.getRawValue());
+        this.isSaveClicked = true;
+        console.log(this.addWorkoutFormGroup.valid, this.addWorkoutFormGroup.getRawValue());
+
+        if (this.addWorkoutFormGroup.valid) {
+            console.log('save clicked', this.getWorkoutFromFormGroup(this.addWorkoutFormGroup.getRawValue()));
+            // this.workoutDataService.create(this.getWorkoutFromFormGroup(this.addWorkoutFormGroup.getRawValue()));
+        }
+    }
+
+    //TODO: ID should be added outside of component
+    private getWorkoutFromFormGroup(workoutData: WorkoutData): Workout {
+        return {
+            id: uid(16),
+            date: workoutData.date,
+            type: workoutData.type,
+            exercises: workoutData.exercises
+        } as Workout;
     }
 }

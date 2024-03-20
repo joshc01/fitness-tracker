@@ -1,17 +1,19 @@
 <p-fieldset legend="Upper Body" [toggleable]="true">
-    <ng-container *ngIf="upperBodyPRs as records; else unavailableWorkoutsTemplate">
+    <ng-container *ngIf="upperBody | async as upper">
         <ng-container
+            *ngIf="upper.length; else unavailableWorkoutsTemplate"
             [ngTemplateOutlet]="tableTemplate"
-            [ngTemplateOutletContext]="{ personalRecords: records }"
+            [ngTemplateOutletContext]="{ personalRecords: upper }"
         ></ng-container>
     </ng-container>
 </p-fieldset>
 
 <p-fieldset legend="Lower Body" [toggleable]="true">
-    <ng-container *ngIf="lowerBodyPRs as records; else unavailableWorkoutsTemplate">
+    <ng-container *ngIf="lowerBody | async as lower">
         <ng-container
+            *ngIf="lower.length; else unavailableWorkoutsTemplate"
             [ngTemplateOutlet]="tableTemplate"
-            [ngTemplateOutletContext]="{ personalRecords: records }"
+            [ngTemplateOutletContext]="{ personalRecords: lower }"
         ></ng-container>
     </ng-container>
 </p-fieldset>

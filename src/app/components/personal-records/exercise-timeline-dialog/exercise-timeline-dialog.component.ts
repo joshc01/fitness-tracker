@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { WorkoutDataService } from '../../../services/workout-data.service';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { ExerciseName, ExerciseRecord, Workout } from '../../../types/workout';
+import { Workout } from '../../../types/workout';
 import { ChartModule } from 'primeng/chart';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { ExerciseLog } from '../../../types/exercise';
+import { ExerciseName } from '../../../types/enums/exercise-name';
 
 @Component({
     selector: 'app-exercise-timeline-dialog',
@@ -17,7 +19,7 @@ export class ExerciseTimelineDialogComponent implements OnInit {
     chartData!: unknown;
     chartOptions!: unknown;
 
-    private currentExerciseRecords!: ExerciseRecord[];
+    private currentExerciseLogs!: ExerciseLog[];
     private destroy$ = new Subject<void>();
     private workouts$!: Observable<Workout[]>;
 
@@ -29,11 +31,11 @@ export class ExerciseTimelineDialogComponent implements OnInit {
     ngOnInit() {
         this.currentExerciseName = this.dialogConfig.data.currentExerciseName;
 
-        this.workouts$ = this.workoutDataService.getAllWorkouts();
+        this.workouts$ = this.workoutDataService.workouts$;
 
         this.workouts$.pipe(takeUntil(this.destroy$)).subscribe((workouts) => {
-            this.currentExerciseRecords = this.getSortedExerciseRecordsByName(workouts, this.currentExerciseName);
-            this.chartData = this.getExerciseRecordsData(this.currentExerciseRecords);
+            this.currentExerciseLogs = this.getSortedExerciseLogsByName(workouts, this.currentExerciseName);
+            this.chartData = this.getExerciseLogsData(this.currentExerciseLogs);
         });
 
         this.chartOptions = {
@@ -45,12 +47,12 @@ export class ExerciseTimelineDialogComponent implements OnInit {
         };
     }
 
-    private getExerciseRecordsData(sortedExerciseRecords: ExerciseRecord[]): unknown {
-        const labels = sortedExerciseRecords.map((record) => this.formatDate(record.date));
+    private getExerciseLogsData(sortedExerciseLogs: ExerciseLog[]): unknown {
+        const labels = sortedExerciseLogs.map((log) => this.formatDate(log.date));
         const datasets = [
             {
                 label: this.currentExerciseName,
-                data: sortedExerciseRecords.map((record) => record.weight),
+                data: sortedExerciseLogs.map((log) => log.weight),
                 fill: false,
                 tension: 0.4
             }
@@ -70,9 +72,9 @@ export class ExerciseTimelineDialogComponent implements OnInit {
         return `${month}/${day}/${year}`;
     }
 
-    private getSortedExerciseRecordsByName(workouts: Workout[], exerciseName: ExerciseName): ExerciseRecord[] {
-        const allExerciseRecords = workouts.flatMap((workout) =>
-            workout.exercises.map((exercise): ExerciseRecord => {
+    private getSortedExerciseLogsByName(workouts: Workout[], exerciseName: ExerciseName): ExerciseLog[] {
+        const allExerciseLogs = workouts.flatMap((workout) =>
+            workout.exercises.map((exercise): ExerciseLog => {
                 return {
                     ...exercise,
                     date: workout.date
@@ -80,7 +82,7 @@ export class ExerciseTimelineDialogComponent implements OnInit {
             })
         );
 
-        return allExerciseRecords
+        return allExerciseLogs
             .filter((exercise) => exercise.name === exerciseName)
             .sort((a, b) => a.date.getTime() - b.date.getTime());
     }

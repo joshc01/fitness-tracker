@@ -6,9 +6,10 @@
             [iconDisplay]="'input'"
             id="workout-date"
             inputId="workout-date"
+            [ngClass]="{ 'ng-invalid ng-dirty': addWorkoutFormGroup.controls.date.invalid && isSaveClicked }"
             [readonlyInput]="true"
+            [required]="true"
             [showIcon]="true"
-            [showButtonBar]="true"
         ></p-calendar>
         <label for="workout-date">Workout date</label>
     </span>
@@ -16,46 +17,35 @@
     <span class="p-float-label">
         <p-dropdown
             [editable]="true"
-            formControlName="workoutType"
-            id="workoutType"
-            inputId="workoutType"
-            placeholder="Select a Workout Type"
+            formControlName="type"
+            id="type"
+            inputId="type"
+            [ngClass]="{ 'ng-invalid ng-dirty': addWorkoutFormGroup.controls.type.invalid && isSaveClicked }"
             [options]="workoutTypeOptions"
+            placeholder="Select a Workout Type"
+            [required]="true"
         />
-        <label for="workoutType">Workout Type</label>
+        <label for="type">Workout Type</label>
     </span>
 
-    <span class="p-float-label">
-        <p-dropdown
-            [editable]="true"
-            formControlName="exercise"
-            id="exercise"
-            inputId="exercise"
-            [options]="exerciseOptions"
-            placeholder="Select an Exercise"
-        />
-        <label for="exercise">Exercise</label>
-    </span>
+    <!--    TODO: FormArrayName for parent form group and FormControlName for CVA?-->
+    <ng-container
+        formArrayName="exercises"
+        *ngIf="addWorkoutFormGroup.controls.type.valueChanges | async as workoutType"
+    >
+        <ng-container *ngFor="let exerciseForm of addWorkoutFormGroup.controls.exercises.controls; let i = index">
+            <div id="{{ 'exercise_' + i }}" class="exercise-form">
+                <app-add-exercise-form
+                    [formControl]="exerciseForm"
+                    [isSaveClicked]="isSaveClicked"
+                    [selectedWorkoutType]="workoutType"
+                ></app-add-exercise-form>
 
-    <div class="form-calculation">
-        <span class="p-float-label">
-            <p-inputNumber
-                id="sets"
-                inputId="sets"
-                formControlName="sets"
-                [ngClass]="{
-                    'ng-invalid': addWorkoutFormGroup.controls.sets.invalid,
-                    'ng-dirty': addWorkoutFormGroup.controls.sets.dirty
-                }"
-            ></p-inputNumber>
-            <label for="sets">Sets</label>
-        </span>
-        <i class="pi pi-times"></i>
-        <span class="p-float-label">
-            <p-inputNumber formControlName="reps" id="reps" inputId="reps"></p-inputNumber>
-            <label for="reps">Reps</label>
-        </span>
-    </div>
+                <p-button icon="pi pi-times" (onClick)="deleteExercise(i)"></p-button>
+            </div>
+        </ng-container>
+        <p-button (onClick)="addExercise()">Add Exercise</p-button>
+    </ng-container>
 </form>
 
 <p-button (onClick)="saveWorkout()">Save</p-button>

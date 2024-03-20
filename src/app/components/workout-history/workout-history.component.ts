@@ -30,7 +30,7 @@ import { WorkoutDataService } from '../../services/workout-data.service';
 })
 export class WorkoutHistoryComponent implements OnInit, OnDestroy {
     currentWorkout$ = new BehaviorSubject<Workout | null>(null);
-    dateFormControl = new FormControl<Date | null>(null);
+    dateFormControl = new FormControl<Date>(new Date());
     workouts!: Observable<Workout[]>;
 
     private destroy$ = new Subject<void>();
@@ -47,11 +47,12 @@ export class WorkoutHistoryComponent implements OnInit, OnDestroy {
     }
 
     private initDataTable() {
-        this.workouts = this.workoutDataService.getAllWorkouts();
+        this.workouts = this.workoutDataService.workouts$;
 
         combineLatest([this.workouts, this.dateFormControl.valueChanges])
             .pipe(
                 tap(([workouts, selectedDate]) => {
+                    console.log(workouts);
                     const currentWorkout = selectedDate ? this.getWorkoutByDate(workouts, selectedDate) : null;
                     this.currentWorkout$.next(currentWorkout);
                 }),
@@ -60,6 +61,7 @@ export class WorkoutHistoryComponent implements OnInit, OnDestroy {
             .subscribe();
     }
 
+    //TODO: Learn how to handle dates with timestamps and UTC
     private getWorkoutByDate(workouts: Workout[], date: Date): Workout | null {
         const month = date.getMonth();
         const day = date.getDay();

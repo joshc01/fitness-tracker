@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ExerciseName, ExerciseRecord, Workout, WorkoutType } from '../../types/workout';
+import { Workout } from '../../types/workout';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { WorkoutDataService } from '../../services/workout-data.service';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -8,6 +8,9 @@ import { AsyncPipe, DatePipe, NgIf, NgTemplateOutlet, TitleCasePipe } from '@ang
 import { UnderscorePipe } from '../../pipes/underscore.pipe';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ExerciseTimelineDialogComponent } from './exercise-timeline-dialog/exercise-timeline-dialog.component';
+import { ExerciseLog } from '../../types/exercise';
+import { ExerciseName } from '../../types/enums/exercise-name';
+import { WorkoutType } from '../../types/enums/workout-type';
 
 @Component({
     selector: 'app-personal-records',
@@ -19,9 +22,11 @@ import { ExerciseTimelineDialogComponent } from './exercise-timeline-dialog/exer
 })
 export class PersonalRecordsComponent implements OnInit, OnDestroy {
     dialogRef!: DynamicDialogRef;
-    upperBodyPRs!: ExerciseRecord[];
-    lowerBodyPRs!: ExerciseRecord[];
-    selectedExerciseRecord!: ExerciseRecord;
+
+    upperBody = new Subject<ExerciseLog[]>();
+    lowerBody = new Subject<ExerciseLog[]>();
+
+    selectedExerciseRecord!: ExerciseLog;
 
     private destroy$ = new Subject<void>();
 
@@ -33,7 +38,7 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.workouts$ = this.workoutDataService.getAllWorkouts();
+        this.workouts$ = this.workoutDataService.workouts$;
         this.workouts$.pipe(takeUntil(this.destroy$)).subscribe((workouts) => {
             this.buildPRsMapsByWorkouts(workouts);
         });
@@ -48,15 +53,15 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
         const upperBodyWorkouts = workouts.filter((workout) => workout.type === WorkoutType.UPPER_BODY);
         const lowerBodyWorkouts = workouts.filter((workout) => workout.type === WorkoutType.LOWER_BODY);
 
-        const upperBodyExerciseRecords = this.getExerciseRecordsByWorkout(upperBodyWorkouts);
-        const lowerBodyExerciseRecords = this.getExerciseRecordsByWorkout(lowerBodyWorkouts);
+        const upperBodyExerciseLogs = this.getExerciseLogsByWorkout(upperBodyWorkouts);
+        const lowerBodyExerciseLogs = this.getExerciseLogsByWorkout(lowerBodyWorkouts);
 
-        this.upperBodyPRs = this.getSortedPersonalRecords(upperBodyExerciseRecords);
-        this.lowerBodyPRs = this.getSortedPersonalRecords(lowerBodyExerciseRecords);
+        this.upperBody.next(this.getSortedPersonalRecords(upperBodyExerciseLogs));
+        this.lowerBody.next(this.getSortedPersonalRecords(lowerBodyExerciseLogs));
     }
 
-    private getExerciseRecordsByWorkout(workouts: Workout[]): ExerciseRecord[] {
-        return workouts.flatMap((workout): ExerciseRecord[] => {
+    private getExerciseLogsByWorkout(workouts: Workout[]): ExerciseLog[] {
+        return workouts.flatMap((workout): ExerciseLog[] => {
             return workout.exercises.map((exercise) => {
                 return {
                     ...exercise,
@@ -66,26 +71,27 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
         });
     }
 
-    private getSortedPersonalRecords(records: ExerciseRecord[]) {
-        const sortedRecords = records
+    //TODO: This is only sorted by weight. Add functionality to sort by other properties
+    private getSortedPersonalRecords(logs: ExerciseLog[]) {
+        const sortedRecords = logs
             .sort((a, b) => a.name.localeCompare(b.name))
             .reduce(
                 (prev, curr) => ({
                     ...prev,
                     [curr.name]: curr.weight > (prev[curr.name]?.weight ?? 0) ? curr : prev
                 }),
-                {} as Record<ExerciseName, ExerciseRecord>
+                {} as Record<ExerciseName, ExerciseLog>
             );
 
         return Object.values(sortedRecords);
     }
 
-    openDialog(exerciseRecord: TableRowSelectEvent) {
+    openDialog(exercisePR: TableRowSelectEvent) {
         this.dialogRef = this.dialogService.open(ExerciseTimelineDialogComponent, {
             header: 'Timeline',
             modal: true,
             data: {
-                currentExerciseName: exerciseRecord.data.name
+                currentExerciseName: exercisePR.data.name
             }
         });
     }

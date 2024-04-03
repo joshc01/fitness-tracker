@@ -11,6 +11,7 @@ import { ExerciseTimelineDialogComponent } from './exercise-timeline-dialog/exer
 import { ExerciseLog } from '../../types/exercise';
 import { ExerciseName } from '../../types/enums/exercise-name';
 import { WorkoutType } from '../../types/enums/workout-type';
+import { mapStringToExerciseName } from '../../mappers/enum-string/exercise-name.mapper';
 
 @Component({
     selector: 'app-personal-records',
@@ -28,9 +29,9 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
 
     selectedExerciseRecord!: ExerciseLog;
 
-    private destroy$ = new Subject<void>();
+    private _destroy$ = new Subject<void>();
 
-    private workouts$!: Observable<Workout[]>;
+    private _workouts$!: Observable<Workout[]>;
 
     constructor(
         private dialogService: DialogService,
@@ -38,29 +39,29 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.workouts$ = this.workoutDataService.workouts$;
-        this.workouts$.pipe(takeUntil(this.destroy$)).subscribe((workouts) => {
-            this.buildPRsMapsByWorkouts(workouts);
+        this._workouts$ = this.workoutDataService.workouts$;
+        this._workouts$.pipe(takeUntil(this._destroy$)).subscribe((workouts) => {
+            this._buildPRsMapsByWorkouts(workouts);
         });
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
-        this.destroy$.complete();
+        this._destroy$.next();
+        this._destroy$.complete();
     }
 
-    private buildPRsMapsByWorkouts(workouts: Workout[]): void {
+    private _buildPRsMapsByWorkouts(workouts: Workout[]): void {
         const upperBodyWorkouts = workouts.filter((workout) => workout.type === WorkoutType.UPPER_BODY);
         const lowerBodyWorkouts = workouts.filter((workout) => workout.type === WorkoutType.LOWER_BODY);
 
-        const upperBodyExerciseLogs = this.getExerciseLogsByWorkout(upperBodyWorkouts);
-        const lowerBodyExerciseLogs = this.getExerciseLogsByWorkout(lowerBodyWorkouts);
+        const upperBodyExerciseLogs = this._getExerciseLogsByWorkout(upperBodyWorkouts);
+        const lowerBodyExerciseLogs = this._getExerciseLogsByWorkout(lowerBodyWorkouts);
 
-        this.upperBody.next(this.getSortedPersonalRecords(upperBodyExerciseLogs));
-        this.lowerBody.next(this.getSortedPersonalRecords(lowerBodyExerciseLogs));
+        this.upperBody.next(this._getSortedPersonalRecords(upperBodyExerciseLogs));
+        this.lowerBody.next(this._getSortedPersonalRecords(lowerBodyExerciseLogs));
     }
 
-    private getExerciseLogsByWorkout(workouts: Workout[]): ExerciseLog[] {
+    private _getExerciseLogsByWorkout(workouts: Workout[]): ExerciseLog[] {
         return workouts.flatMap((workout): ExerciseLog[] => {
             return workout.exercises.map((exercise) => {
                 return {
@@ -72,13 +73,13 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
     }
 
     //TODO: This is only sorted by weight. Add functionality to sort by other properties
-    private getSortedPersonalRecords(logs: ExerciseLog[]) {
+    private _getSortedPersonalRecords(logs: ExerciseLog[]) {
         const sortedRecords = logs
             .sort((a, b) => a.name.localeCompare(b.name))
             .reduce(
                 (prev, curr) => ({
                     ...prev,
-                    [curr.name]: curr.weight > (prev[curr.name]?.weight ?? 0) ? curr : prev
+                    [curr.name]: curr.weight > (prev[mapStringToExerciseName(curr.name)]?.weight ?? 0) ? curr : prev
                 }),
                 {} as Record<ExerciseName, ExerciseLog>
             );

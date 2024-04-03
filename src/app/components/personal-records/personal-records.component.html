@@ -37,7 +37,7 @@
 
         <ng-template pTemplate="body" let-personalRecord>
             <tr [pSelectableRow]="personalRecord">
-                <td>{{ personalRecord.name | underscore | titlecase }}</td>
+                <td>{{ personalRecord.name }}</td>
                 <td>{{ personalRecord.sets }}</td>
                 <td>{{ personalRecord.reps }}</td>
                 <td>{{ personalRecord.weight }}</td>

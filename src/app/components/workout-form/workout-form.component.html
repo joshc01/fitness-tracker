@@ -1,0 +1,94 @@
+<form [formGroup]="workoutFormGroup" class="form">
+    <span class="p-float-label">
+        <p-calendar
+            dateFormat="D m/d/y"
+            formControlName="date"
+            [iconDisplay]="'input'"
+            id="workout-date"
+            inputId="workout-date"
+            [readonlyInput]="true"
+            [required]="true"
+            [showIcon]="true"
+        ></p-calendar>
+        <label for="workout-date">Workout date</label>
+    </span>
+
+    <span class="p-float-label">
+        <p-dropdown
+            [editable]="true"
+            formControlName="type"
+            id="type"
+            inputId="type"
+            [options]="workoutTypeOptions"
+            placeholder="Select a Workout Type"
+            [required]="true"
+        />
+        <label for="type">Workout Type</label>
+    </span>
+
+    <div
+        *ngIf="type.valueChanges | async as workoutType"
+        formArrayName="exercises"
+        class="flex flex-column gap-2 justify-content-center"
+    >
+        <ng-container *ngFor="let exerciseFormGroup of exercises.controls; let i = index">
+            <div id="{{ 'exercise_' + i }}" class="exercise-form">
+                <app-add-exercise-form
+                    class="p-6 pr-0"
+                    [exerciseFormGroup]="exerciseFormGroup"
+                    [selectedWorkoutType]="workoutType"
+                ></app-add-exercise-form>
+
+                <p-button icon="pi pi-minus" [text]="true" [plain]="true" (onClick)="deleteExercise(i)"></p-button>
+            </div>
+        </ng-container>
+        <div class="flex justify-content-center">
+            <p-button
+                *ngIf="!showUpdateButton"
+                icon="pi pi-plus"
+                [outlined]="true"
+                [rounded]="true"
+                [raised]="true"
+                (onClick)="addExercise()"
+            ></p-button>
+
+            <p-button
+                *ngIf="doesWorkoutExist && showUpdateButton"
+                icon="pi pi-pencil"
+                [outlined]="true"
+                [rounded]="true"
+                [raised]="true"
+                (onClick)="updateWorkout()"
+            ></p-button>
+
+            <p-button
+                *ngIf="mode === Mode.UPDATE"
+                icon="pi pi-check"
+                [outlined]="true"
+                [rounded]="true"
+                [raised]="true"
+                (onClick)="saveUpdatedWorkout()"
+            ></p-button>
+
+            <p-button
+                *ngIf="mode === Mode.UPDATE"
+                icon="pi pi-times"
+                [outlined]="true"
+                [rounded]="true"
+                [raised]="true"
+                (onClick)="cancelUpdatedWorkout()"
+            ></p-button>
+        </div>
+    </div>
+</form>
+
+<p-toast></p-toast>
+
+<p-scrollTop></p-scrollTop>
+
+<p-button
+    *ngIf="!doesWorkoutExist"
+    (onClick)="saveNewWorkout()"
+    [disabled]="workoutFormGroup.invalid || exercises.length < 1"
+    label="Submit"
+></p-button>

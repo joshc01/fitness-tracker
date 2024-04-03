@@ -1,4 +1,4 @@
-@import 'primeflex/primeflex.scss';
+@import '../../../../node_modules/primeflex/primeflex';
 
 :host {
     @include styleclass('flex flex-column mt-4')
@@ -17,5 +17,5 @@
 }
 
 .exercise-form {
-  @include styleclass('flex flex-row column-gap-2')
+  @include styleclass('flex flex-row mx-auto surface-300 border-round justify-content-center')
 }

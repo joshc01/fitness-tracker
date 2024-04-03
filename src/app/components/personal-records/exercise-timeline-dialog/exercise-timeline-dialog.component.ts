@@ -19,9 +19,9 @@ export class ExerciseTimelineDialogComponent implements OnInit {
     chartData!: unknown;
     chartOptions!: unknown;
 
-    private currentExerciseLogs!: ExerciseLog[];
-    private destroy$ = new Subject<void>();
-    private workouts$!: Observable<Workout[]>;
+    private _currentExerciseLogs!: ExerciseLog[];
+    private _destroy$ = new Subject<void>();
+    private _workouts$!: Observable<Workout[]>;
 
     constructor(
         private workoutDataService: WorkoutDataService,
@@ -31,11 +31,11 @@ export class ExerciseTimelineDialogComponent implements OnInit {
     ngOnInit() {
         this.currentExerciseName = this.dialogConfig.data.currentExerciseName;
 
-        this.workouts$ = this.workoutDataService.workouts$;
+        this._workouts$ = this.workoutDataService.workouts$;
 
-        this.workouts$.pipe(takeUntil(this.destroy$)).subscribe((workouts) => {
-            this.currentExerciseLogs = this.getSortedExerciseLogsByName(workouts, this.currentExerciseName);
-            this.chartData = this.getExerciseLogsData(this.currentExerciseLogs);
+        this._workouts$.pipe(takeUntil(this._destroy$)).subscribe((workouts) => {
+            this._currentExerciseLogs = this._getSortedExerciseLogsByName(workouts, this.currentExerciseName);
+            this.chartData = this._getExerciseLogsData(this._currentExerciseLogs);
         });
 
         this.chartOptions = {
@@ -47,8 +47,8 @@ export class ExerciseTimelineDialogComponent implements OnInit {
         };
     }
 
-    private getExerciseLogsData(sortedExerciseLogs: ExerciseLog[]): unknown {
-        const labels = sortedExerciseLogs.map((log) => this.formatDate(log.date));
+    private _getExerciseLogsData(sortedExerciseLogs: ExerciseLog[]): unknown {
+        const labels = sortedExerciseLogs.map((log) => this._formatDate(log.date));
         const datasets = [
             {
                 label: this.currentExerciseName,
@@ -64,7 +64,7 @@ export class ExerciseTimelineDialogComponent implements OnInit {
         };
     }
 
-    private formatDate(date: Date): string {
+    private _formatDate(date: Date): string {
         const month = date.getMonth() + 1;
         const day = date.getDate();
         const year = date.getFullYear();
@@ -72,7 +72,7 @@ export class ExerciseTimelineDialogComponent implements OnInit {
         return `${month}/${day}/${year}`;
     }
 
-    private getSortedExerciseLogsByName(workouts: Workout[], exerciseName: ExerciseName): ExerciseLog[] {
+    private _getSortedExerciseLogsByName(workouts: Workout[], exerciseName: ExerciseName): ExerciseLog[] {
         const allExerciseLogs = workouts.flatMap((workout) =>
             workout.exercises.map((exercise): ExerciseLog => {
                 return {

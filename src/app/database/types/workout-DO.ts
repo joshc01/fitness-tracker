@@ -1,10 +1,9 @@
-import { Exercise } from '../../types/exercise';
 import { Timestamp } from 'firebase/firestore';
-import { WorkoutType } from '../../types/enums/workout-type';
+import { Exercise } from '../../types/exercise';
 
 export type WorkoutDO = {
     id: string;
     date: Timestamp;
-    type: WorkoutType;
+    type: number;
     exercises: Exercise[];
 };

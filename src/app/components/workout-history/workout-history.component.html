@@ -5,7 +5,17 @@
         [readonlyInput]="true"
         [showIcon]="true"
         [formControl]="dateFormControl"
-    ></p-calendar>
+    >
+        <ng-template pTemplate="date" let-date>
+            <span
+                [ngStyle]="{
+                    textDecoration: allDateStrings.includes(getPrimeNGDateFromCalendar(date)) ? 'underline' : 'inherit'
+                }"
+            >
+                {{ date.day }}
+            </span>
+        </ng-template>
+    </p-calendar>
 
     <div
         *ngIf="currentWorkout$ | async; let workout; else: unavailableWorkoutsTemplate"
@@ -15,7 +25,7 @@
         <p-table [value]="workout.exercises" styleClass="p-datatable-gridlines">
             <ng-template pTemplate="caption">
                 <div class="table-caption">
-                    <span>{{ workout.type | underscore | titlecase }}</span>
+                    <span>{{ mapWorkoutTypeToString(workout.type) | underscore | titlecase }}</span>
                     <span>{{ workout.date | date: 'shortDate' }}</span>
                 </div>
             </ng-template>

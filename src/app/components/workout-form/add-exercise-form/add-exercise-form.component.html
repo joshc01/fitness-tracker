@@ -1,0 +1,77 @@
+<form [formGroup]="exerciseFormGroup" class="form">
+    <span class="p-float-label">
+        <p-dropdown
+            [editable]="true"
+            formControlName="focus"
+            id="focus"
+            inputId="exercise"
+            [options]="focusOptions"
+            [required]="true"
+        />
+        <label for="focus">Select a Focus</label>
+    </span>
+
+    <div class="form-exercise" role="presentation" (click)="showDisabledExerciseMessage()">
+        <span class="p-float-label">
+            <p-dropdown
+                [editable]="true"
+                formControlName="name"
+                id="name"
+                inputId="exercise"
+                [options]="nameOptions"
+                [required]="true"
+            />
+            <label for="name">Select an Exercise</label>
+        </span>
+    </div>
+
+    <div class="form-number-inputs">
+        <div class="form-calculation">
+            <span class="p-float-label">
+                <p-inputNumber
+                    buttonLayout="vertical"
+                    decrementButtonIcon="pi pi-minus"
+                    incrementButtonIcon="pi pi-plus"
+                    id="sets"
+                    inputId="sets"
+                    formControlName="sets"
+                    [required]="true"
+                    [showButtons]="true"
+                    [style]="{ width: '4rem' }"
+                ></p-inputNumber>
+                <label for="sets">Sets</label>
+            </span>
+            <i class="pi pi-times" style="color: rgb(128, 128, 128)"></i>
+            <span class="p-float-label">
+                <p-inputNumber
+                    buttonLayout="vertical"
+                    decrementButtonIcon="pi pi-minus"
+                    incrementButtonIcon="pi pi-plus"
+                    formControlName="reps"
+                    id="reps"
+                    inputId="reps"
+                    [required]="true"
+                    [showButtons]="true"
+                    [style]="{ width: '4rem' }"
+                ></p-inputNumber>
+                <label for="reps">Reps</label>
+            </span>
+        </div>
+        <span class="p-float-label">
+            <p-inputNumber
+                buttonLayout="vertical"
+                decrementButtonIcon="pi pi-minus"
+                incrementButtonIcon="pi pi-plus"
+                formControlName="weight"
+                id="weight"
+                inputId="weight"
+                [required]="true"
+                [showButtons]="true"
+                spellcheck="false"
+                [style]="{ width: '6rem' }"
+                suffix=" lbs"
+            ></p-inputNumber>
+            <label for="weight">Weight</label>
+        </span>
+    </div>
+</form>

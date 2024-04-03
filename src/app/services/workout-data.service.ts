@@ -26,7 +26,13 @@ export class WorkoutDataService {
     create(workout: Workout) {
         const workoutDO = mapWorkoutToDO(workout);
 
-        return this.workoutsDOCollection.add({ ...workoutDO, id: this.workoutsDOCollection.ref.doc().id });
+        return this.workoutsDOCollection.doc(workoutDO.id).set(workoutDO);
+    }
+
+    update(workout: Workout) {
+        const workoutDO = mapWorkoutToDO(workout);
+
+        return this.workoutsDOCollection.doc(workoutDO.id).set(workoutDO);
     }
 
     delete(id: string) {

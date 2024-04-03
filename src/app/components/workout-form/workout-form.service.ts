@@ -16,15 +16,16 @@ export class WorkoutFormService {
         const shortenedDate = mapDateToShortenedDate(date);
 
         return this._existingWorkouts$.pipe(
-            map(
-                (workouts) =>
+            map((workouts) => {
+                return (
                     workouts.find(
                         (workout) =>
                             workout.date.getMonth() === shortenedDate.month &&
                             workout.date.getDate() === shortenedDate.day &&
                             workout.date.getFullYear() === shortenedDate.year
                     ) ?? null
-            )
+                );
+            })
         );
     }
 }

@@ -34,12 +34,18 @@
         <ng-container *ngFor="let exerciseFormGroup of exercises.controls; let i = index">
             <div id="{{ 'exercise_' + i }}" class="exercise-form">
                 <app-add-exercise-form
-                    class="p-6 pr-0"
+                    [ngClass]="!showUpdateButton ? 'p-6 pr-0' : 'p-6'"
                     [exerciseFormGroup]="exerciseFormGroup"
                     [selectedWorkoutType]="workoutType"
                 ></app-add-exercise-form>
 
-                <p-button icon="pi pi-minus" [text]="true" [plain]="true" (onClick)="deleteExercise(i)"></p-button>
+                <p-button
+                    icon="pi pi-minus"
+                    *ngIf="!showUpdateButton"
+                    [text]="true"
+                    [plain]="true"
+                    (onClick)="deleteExercise(i)"
+                ></p-button>
             </div>
         </ng-container>
         <div class="flex justify-content-center">
@@ -88,7 +94,7 @@
 
 <p-button
     *ngIf="!doesWorkoutExist"
-    (onClick)="saveNewWorkout()"
+    (onClick)="saveWorkout()"
     [disabled]="workoutFormGroup.invalid || exercises.length < 1"
     label="Submit"
 ></p-button>

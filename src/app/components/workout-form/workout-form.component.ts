@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -15,7 +15,7 @@ import { mapStringToWorkoutType, mapWorkoutTypeToString } from '../../mappers/en
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { Subject, take, takeUntil } from 'rxjs';
+import { startWith, Subject, take, takeUntil } from 'rxjs';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScrollTopModule } from 'primeng/scrolltop';
 import { WorkoutFormService } from './workout-form.service';
@@ -88,8 +88,7 @@ export class WorkoutFormComponent implements OnInit {
     constructor(
         private _workoutDataService: WorkoutDataService,
         private _messageService: MessageService,
-        private _addWorkoutFormService: WorkoutFormService,
-        private _cdRef: ChangeDetectorRef
+        private _addWorkoutFormService: WorkoutFormService
     ) {}
 
     ngOnInit() {
@@ -101,8 +100,8 @@ export class WorkoutFormComponent implements OnInit {
             }
         });
 
-        //TODO: Use higher-order observable instead of nested subscriptions
-        this.date.valueChanges.pipe(takeUntil(this._destroy$)).subscribe((date) => {
+        //TODO: Use operator instead of nested subscriptions
+        this.date.valueChanges.pipe(startWith(this.date.value), takeUntil(this._destroy$)).subscribe((date) => {
             this._addWorkoutFormService
                 .getExistingWorkoutByDate(date)
                 .pipe(take(1))
@@ -110,20 +109,22 @@ export class WorkoutFormComponent implements OnInit {
                     this._resetTypeAndExercises();
 
                     if (workout) {
-                        this.existingWorkout = workout;
                         this.doesWorkoutExist = true;
                         this.showUpdateButton = true;
-                        this._showExistingWorkout(workout);
+                        this._showExistingWorkoutAndDisableForm(workout);
                     } else {
                         this.doesWorkoutExist = false;
+                        this.showUpdateButton = false;
+                        this._enableWorkoutForm();
                     }
                 });
         });
     }
 
-    private _showExistingWorkout(workout: Workout) {
+    private _showExistingWorkoutAndDisableForm(workout: Workout) {
+        this.existingWorkout = workout;
+        this.existingWorkout.exercises.map((exercise) => this.addExercise(exercise));
         this.type.setValue(mapWorkoutTypeToString(workout.type));
-        workout.exercises.map((exercise) => this.addExercise(exercise));
         this._disableWorkoutForm();
     }
 
@@ -154,6 +155,12 @@ export class WorkoutFormComponent implements OnInit {
         this.exercises.push(addExerciseFormGroup);
     }
 
+    saveWorkout() {
+        this._showSuccessToast();
+        this._workoutDataService.create(this._mapWorkoutDataToWorkout(this.workoutFormGroup.getRawValue()));
+        this._resetTypeAndExercises();
+    }
+
     deleteExercise(index: number) {
         this.exercises.removeAt(index);
     }
@@ -162,42 +169,20 @@ export class WorkoutFormComponent implements OnInit {
         this.showUpdateButton = false;
         this.mode = Mode.UPDATE;
         this._enableWorkoutForm();
-        console.log(this.doesWorkoutExist, this.showUpdateButton);
-    }
-
-    saveUpdatedWorkout() {
-        if (this.workoutFormGroup.valid) {
-            this.showUpdateButton = true;
-            this.mode = Mode.ADD;
-            this._showSuccessToast();
-            this._workoutDataService.create(this._mapWorkoutDataToWorkout(this.workoutFormGroup.getRawValue()));
-            this._resetTypeAndExercises();
-        }
     }
 
     cancelUpdatedWorkout() {
-        this.showUpdateButton = true;
-        this.mode = Mode.ADD;
-        this._resetTypeAndExercises();
-        this._showExistingWorkout(this.existingWorkout);
+        this._closeUpdateMode();
+        this._showExistingWorkoutAndDisableForm(this.existingWorkout);
     }
 
-    saveNewWorkout() {
-        if (this.workoutFormGroup.valid) {
-            this._showSuccessToast();
-            this._workoutDataService.create(this._mapWorkoutDataToWorkout(this.workoutFormGroup.getRawValue()));
-            this._resetTypeAndExercises();
-        }
+    saveUpdatedWorkout() {
+        this._closeUpdateMode();
+        this.saveWorkout();
     }
 
-    private _disableWorkoutForm() {
-        this.type.disable();
-        this.exercises.disable();
-    }
-
-    private _enableWorkoutForm() {
-        this.type.enable();
-        this.exercises.enable();
+    private _showSuccessToast() {
+        this._messageService.add({ severity: 'success', summary: 'Success', detail: 'Workout saved successfully.' });
     }
 
     //TODO: ID should be added outside of component
@@ -210,12 +195,24 @@ export class WorkoutFormComponent implements OnInit {
         };
     }
 
-    private _showSuccessToast() {
-        this._messageService.add({ severity: 'success', summary: 'Success', detail: 'Workout saved successfully.' });
-    }
-
     private _resetTypeAndExercises() {
         this.type.reset();
         this.exercises.clear();
+    }
+
+    private _closeUpdateMode() {
+        this.showUpdateButton = true;
+        this.mode = Mode.ADD;
+        this._resetTypeAndExercises();
+    }
+
+    private _disableWorkoutForm() {
+        this.type.disable();
+        this.exercises.disable();
+    }
+
+    private _enableWorkoutForm() {
+        this.type.enable();
+        this.exercises.enable();
     }
 }

@@ -2,21 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Workout } from '../../types/workout';
 import { TreeTableModule } from 'primeng/treetable';
 import { CalendarModule } from 'primeng/calendar';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { combineLatest, Observable, Subject, take, takeUntil, tap } from 'rxjs';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { combineLatest, Subject, take, takeUntil, tap } from 'rxjs';
 import { AsyncPipe, DatePipe, NgForOf, NgIf, NgStyle, TitleCasePipe } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { UnderscorePipe } from '../../pipes/underscore.pipe';
 import { WorkoutDataService } from '../../services/workout-data.service';
+import { StyledCalendarComponent } from '../styled-calendar/styled-calendar.component';
 import { mapWorkoutTypeToString } from '../../mappers/enum-string/workout-type.mapper';
-
-type PrimeNGDate = {
-    day: number;
-    month: number;
-    year: number;
-    today?: boolean;
-    selectable?: boolean;
-};
 
 @Component({
     selector: 'app-workout-history',
@@ -32,7 +25,8 @@ type PrimeNGDate = {
         TableModule,
         DatePipe,
         TitleCasePipe,
-        UnderscorePipe
+        UnderscorePipe,
+        StyledCalendarComponent
     ],
     templateUrl: './workout-history.component.html',
     styleUrl: './workout-history.component.scss'
@@ -40,22 +34,19 @@ type PrimeNGDate = {
 export class WorkoutHistoryComponent implements OnInit, OnDestroy {
     private _destroy$ = new Subject<void>();
 
-    currentWorkout$: Subject<Workout | null> = new Subject();
-    dateFormControl = new FormControl<Date>(new Date());
-    workouts$!: Observable<Workout[]>;
-    allDateStrings: string[] = [];
+    protected readonly mapWorkoutTypeToString = mapWorkoutTypeToString;
 
-    constructor(private workoutDataService: WorkoutDataService) {
-        this.workouts$ = this.workoutDataService.workouts$;
-    }
+    currentWorkout$: Subject<Workout | null> = new Subject();
+    dateFormControl = new FormControl<Date>(new Date(), { validators: Validators.required, nonNullable: true });
+    pastWorkouts$ = this.workoutDataService.workouts$;
+
+    constructor(private workoutDataService: WorkoutDataService) {}
 
     ngOnInit() {
         //TODO: Look into not needing to manually set the currentWorkout for the initial Date. Look into NOT using combineLatest
-        this.workouts$.pipe(take(1)).subscribe((workouts) => {
+        this.pastWorkouts$.pipe(take(1)).subscribe((workouts) => {
             const initialDateWorkout = this._getWorkoutsByDate(workouts, new Date());
             this.currentWorkout$.next(initialDateWorkout);
-
-            this.allDateStrings = this._getAllDates(workouts).map((date) => this._getPrimeNGDateFromDate(date));
         });
 
         this._initDataTable();
@@ -67,12 +58,11 @@ export class WorkoutHistoryComponent implements OnInit, OnDestroy {
     }
 
     private _initDataTable() {
-        combineLatest([this.workouts$, this.dateFormControl.valueChanges])
+        combineLatest([this.pastWorkouts$, this.dateFormControl.valueChanges])
             .pipe(
                 tap(([workouts, selectedDate]) => {
                     const currentWorkout = selectedDate ? this._getWorkoutsByDate(workouts, selectedDate) : null;
                     this.currentWorkout$.next(currentWorkout);
-                    console.log(workouts);
                 }),
                 takeUntil(this._destroy$)
             )
@@ -94,18 +84,4 @@ export class WorkoutHistoryComponent implements OnInit, OnDestroy {
 
         return workout ?? null;
     }
-
-    private _getAllDates(workout: Workout[]): Date[] {
-        return workout.map((workout) => workout.date);
-    }
-
-    private _getPrimeNGDateFromDate(date: Date): string {
-        return date.getMonth().toString() + date.getDate().toString() + date.getFullYear().toString();
-    }
-
-    getPrimeNGDateFromCalendar(primeNGDate: PrimeNGDate): string {
-        return primeNGDate.month.toString() + primeNGDate.day.toString() + primeNGDate.year.toString();
-    }
-
-    protected readonly mapWorkoutTypeToString = mapWorkoutTypeToString;
 }

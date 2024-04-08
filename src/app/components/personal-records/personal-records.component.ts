@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Workout } from '../../types/workout';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { WorkoutDataService } from '../../services/workout-data.service';
 import { FieldsetModule } from 'primeng/fieldset';
 import { TableModule, TableRowSelectEvent } from 'primeng/table';
@@ -30,8 +30,7 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
     selectedExerciseRecord!: ExerciseLog;
 
     private _destroy$ = new Subject<void>();
-
-    private _workouts$!: Observable<Workout[]>;
+    private _workouts$ = this.workoutDataService.workouts$;
 
     constructor(
         private dialogService: DialogService,
@@ -39,7 +38,6 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this._workouts$ = this.workoutDataService.workouts$;
         this._workouts$.pipe(takeUntil(this._destroy$)).subscribe((workouts) => {
             this._buildPRsMapsByWorkouts(workouts);
         });
@@ -79,7 +77,10 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
             .reduce(
                 (prev, curr) => ({
                     ...prev,
-                    [curr.name]: curr.weight > (prev[mapStringToExerciseName(curr.name)]?.weight ?? 0) ? curr : prev
+                    [mapStringToExerciseName(curr.name)]:
+                        curr.weight >= (prev[mapStringToExerciseName(curr.name)]?.weight ?? 0)
+                            ? curr
+                            : prev[mapStringToExerciseName(curr.name)]
                 }),
                 {} as Record<ExerciseName, ExerciseLog>
             );
@@ -93,7 +94,8 @@ export class PersonalRecordsComponent implements OnInit, OnDestroy {
             modal: true,
             data: {
                 currentExerciseName: exercisePR.data.name
-            }
+            },
+            maximizable: true
         });
     }
 }

@@ -1,7 +1,7 @@
 @import '../../../../node_modules/primeflex/primeflex';
 
 :host {
-    @include styleclass('flex flex-column mt-4')
+    @include styleclass('flex flex-column m-4')
 }
 
 .form {

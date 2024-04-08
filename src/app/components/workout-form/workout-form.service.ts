@@ -12,7 +12,7 @@ export class WorkoutFormService {
 
     constructor(private _workoutDataService: WorkoutDataService) {}
 
-    getExistingWorkoutByDate(date: Date): Observable<Workout | null> {
+    getExistingWorkoutByDate$(date: Date): Observable<Workout | null> {
         const shortenedDate = mapDateToShortenedDate(date);
 
         return this._existingWorkouts$.pipe(

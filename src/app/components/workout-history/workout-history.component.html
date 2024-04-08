@@ -1,21 +1,11 @@
 <div class="history-page">
-    <p-calendar
-        dateFormat="D m/d/y"
-        [iconDisplay]="'input'"
-        [readonlyInput]="true"
-        [showIcon]="true"
-        [formControl]="dateFormControl"
-    >
-        <ng-template pTemplate="date" let-date>
-            <span
-                [ngStyle]="{
-                    textDecoration: allDateStrings.includes(getPrimeNGDateFromCalendar(date)) ? 'underline' : 'inherit'
-                }"
-            >
-                {{ date.day }}
-            </span>
-        </ng-template>
-    </p-calendar>
+    <ng-container *ngIf="pastWorkouts$ | async as pastWorkouts">
+        <app-styled-calendar
+            [dateFormControl]="dateFormControl"
+            [pastWorkouts]="pastWorkouts"
+            [idSuffix]="'-history'"
+        ></app-styled-calendar>
+    </ng-container>
 
     <div
         *ngIf="currentWorkout$ | async; let workout; else: unavailableWorkoutsTemplate"

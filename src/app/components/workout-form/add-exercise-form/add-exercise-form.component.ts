@@ -60,6 +60,16 @@ export class AddExerciseFormComponent implements OnInit, OnChanges {
         }
     }
 
+    showDisabledExerciseMessage() {
+        if (this.exerciseFormGroup.controls.name.disabled) {
+            this._messageService.add({
+                severity: 'warn',
+                summary: 'Focus is missing',
+                detail: 'Please select a Focus group before choosing an Exercise.'
+            });
+        }
+    }
+
     private _setDropdownOptions() {
         const workoutType = mapStringToWorkoutType(this.selectedWorkoutType);
 
@@ -80,15 +90,5 @@ export class AddExerciseFormComponent implements OnInit, OnChanges {
         this.nameOptions = getExerciseNamesByFocus(exerciseFocus).map((exerciseName) =>
             mapExerciseNameToString(exerciseName)
         );
-    }
-
-    showDisabledExerciseMessage() {
-        if (this.exerciseFormGroup.controls.name.disabled) {
-            this._messageService.add({
-                severity: 'warn',
-                summary: 'Focus is missing',
-                detail: 'Please select a Focus group before choosing an Exercise.'
-            });
-        }
     }
 }

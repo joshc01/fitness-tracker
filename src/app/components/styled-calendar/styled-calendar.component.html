@@ -1,0 +1,23 @@
+<span class="p-float-label">
+    <p-calendar
+        dateFormat="D m/d/y"
+        [formControl]="dateFormControl"
+        [iconDisplay]="'input'"
+        [id]="'workout-date' + idSuffix"
+        [inputId]="'workout-date' + idSuffix"
+        [maxDate]="today"
+        [readonlyInput]="true"
+        [showIcon]="true"
+    >
+        <ng-template pTemplate="date" let-date>
+            <span
+                [ngStyle]="{
+                    textDecoration: allDateStrings.includes(getPrimeNGDateFromCalendar(date)) ? 'underline' : 'inherit'
+                }"
+            >
+                {{ date.day }}
+            </span>
+        </ng-template>
+    </p-calendar>
+    <label [for]="'workout-date' + idSuffix">Workout date</label>
+</span>

@@ -1,0 +1,17 @@
+@import 'primeflex/primeflex.scss';
+
+:host {
+    @include styleclass('flex m-4')
+}
+
+.history-page {
+    @include styleclass('flex flex-column flex-grow-1 row-gap-4 mt-4')
+}
+
+.table {
+    @include styleclass('w-full my-4');
+
+    &-caption {
+        @include styleclass('flex align-items-center justify-content-between')
+    }
+}

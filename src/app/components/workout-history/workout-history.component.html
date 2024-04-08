@@ -1,0 +1,46 @@
+<div class="history-page">
+    <ng-container *ngIf="pastWorkouts$ | async as pastWorkouts">
+        <app-styled-calendar
+            [dateFormControl]="dateFormControl"
+            [pastWorkouts]="pastWorkouts"
+            [idSuffix]="'-history'"
+        ></app-styled-calendar>
+    </ng-container>
+
+    <div
+        *ngIf="currentWorkout$ | async; let workout; else: unavailableWorkoutsTemplate"
+        id="workout-history-table"
+        class="table"
+    >
+        <p-table [value]="workout.exercises" styleClass="p-datatable-gridlines">
+            <ng-template pTemplate="caption">
+                <div class="table-caption">
+                    <span>{{ mapWorkoutTypeToString(workout.type) | underscore | titlecase }}</span>
+                    <span>{{ workout.date | date: 'shortDate' }}</span>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Exercise</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Weight</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-exercise>
+                <tr>
+                    <td>{{ exercise.name | underscore | titlecase }}</td>
+                    <td>{{ exercise.sets }}</td>
+                    <td>{{ exercise.reps }}</td>
+                    <td>{{ exercise.weight }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<ng-template #unavailableWorkoutsTemplate>
+    <span>No recorded workouts available for this date.</span>
+</ng-template>

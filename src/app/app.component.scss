@@ -1,0 +1,7 @@
+@import 'primeflex/primeflex.scss';
+
+.toolbar {
+    &-center, &-end {
+        @include styleclass('flex gap-2')
+    }
+}

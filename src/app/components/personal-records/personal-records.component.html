@@ -1,0 +1,52 @@
+<p-fieldset legend="Upper Body" [toggleable]="true">
+    <ng-container *ngIf="upperBody | async as upper">
+        <ng-container
+            *ngIf="upper.length; else unavailableWorkoutsTemplate"
+            [ngTemplateOutlet]="tableTemplate"
+            [ngTemplateOutletContext]="{ personalRecords: upper }"
+        ></ng-container>
+    </ng-container>
+</p-fieldset>
+
+<p-fieldset legend="Lower Body" [toggleable]="true">
+    <ng-container *ngIf="lowerBody | async as lower">
+        <ng-container
+            *ngIf="lower.length; else unavailableWorkoutsTemplate"
+            [ngTemplateOutlet]="tableTemplate"
+            [ngTemplateOutletContext]="{ personalRecords: lower }"
+        ></ng-container>
+    </ng-container>
+</p-fieldset>
+
+<ng-template #tableTemplate let-personalRecords="personalRecords">
+    <p-table
+        [value]="personalRecords"
+        selectionMode="single"
+        [(selection)]="selectedExerciseRecord"
+        (onRowSelect)="openDialog($event)"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Exercise</th>
+                <th>Sets</th>
+                <th>Reps</th>
+                <th>Weight</th>
+                <th>Date</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-personalRecord>
+            <tr [pSelectableRow]="personalRecord">
+                <td>{{ personalRecord.name }}</td>
+                <td>{{ personalRecord.sets }}</td>
+                <td>{{ personalRecord.reps }}</td>
+                <td>{{ personalRecord.weight }}</td>
+                <td>{{ personalRecord.date | date: 'shortDate' }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</ng-template>
+
+<ng-template #unavailableWorkoutsTemplate>
+    <span>No recorded workouts available.</span>
+</ng-template>

@@ -1,0 +1,21 @@
+@import '../../../../node_modules/primeflex/primeflex';
+
+:host {
+    @include styleclass('flex flex-column m-4')
+}
+
+.form {
+    @include styleclass('flex flex-column my-4');
+}
+
+.form {
+    @include styleclass('row-gap-6');
+
+    &-calculation {
+        @include styleclass('flex flex-row align-items-center column-gap-2')
+    }
+}
+
+.exercise-form {
+  @include styleclass('flex flex-row mx-auto surface-300 border-round justify-content-center')
+}

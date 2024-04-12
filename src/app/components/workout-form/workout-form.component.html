@@ -1,9 +1,11 @@
-<form *ngIf="pastWorkouts$ | async as pastWorkouts" id="workoutForm" [formGroup]="workoutFormGroup" class="form">
-    <app-styled-calendar
-        [dateFormControl]="workoutFormGroup.controls.date"
-        [pastWorkouts]="pastWorkouts"
-        [idSuffix]="'-add'"
-    ></app-styled-calendar>
+<form id="workoutForm" [formGroup]="workoutFormGroup" class="form">
+    <ng-container *ngIf="pastWorkouts$ | async as pastWorkouts">
+        <app-styled-calendar
+            [dateFormControl]="workoutFormGroup.controls.date"
+            [pastWorkouts]="pastWorkouts"
+            [idSuffix]="'-add'"
+        ></app-styled-calendar>
+    </ng-container>
 
     <span class="p-float-label">
         <p-dropdown
@@ -60,7 +62,7 @@
             ></p-button>
 
             <p-button
-                *ngIf="mode === Mode.UPDATE"
+                *ngIf="(mode$ | async) === Mode.UPDATE"
                 icon="pi pi-times"
                 [outlined]="true"
                 [rounded]="true"
@@ -85,7 +87,7 @@
 ></p-button>
 
 <p-button
-    *ngIf="mode === Mode.UPDATE"
+    *ngIf="(mode$ | async) === Mode.UPDATE"
     [disabled]="workoutFormGroup.invalid || exercises.length < 1"
     [raised]="true"
     [rounded]="true"

@@ -100,6 +100,7 @@ export function getExerciseNamesByFocus(focus: ExerciseFocus): ExerciseName[] {
     }
 }
 
+//TODO: Make mapper functions into a map or record object instead
 export function getExerciseFocusByWorkoutType(workoutType: WorkoutType): ExerciseFocus[] {
     switch (workoutType) {
         case WorkoutType.UPPER_BODY:
@@ -117,5 +118,25 @@ export function getExerciseFocusByWorkoutType(workoutType: WorkoutType): Exercis
         case WorkoutType.FULL_BODY:
         default:
             return Object.values(ExerciseFocus).filter((focus) => isNaN(Number(focus)));
+    }
+}
+
+export function getWorkoutTypeByExerciseFocus(focus: ExerciseFocus): WorkoutType {
+    switch (focus) {
+        case ExerciseFocus.BACK:
+        case ExerciseFocus.BICEPS:
+        case ExerciseFocus.CHEST:
+        case ExerciseFocus.CORE:
+        case ExerciseFocus.FOREARMS:
+        case ExerciseFocus.SHOULDERS:
+        case ExerciseFocus.TRICEPS:
+            return WorkoutType.UPPER_BODY;
+        case ExerciseFocus.CALVES:
+        case ExerciseFocus.GLUTES:
+        case ExerciseFocus.HAMSTRINGS:
+        case ExerciseFocus.QUADS:
+            return WorkoutType.LOWER_BODY;
+        default:
+            return WorkoutType.FULL_BODY;
     }
 }

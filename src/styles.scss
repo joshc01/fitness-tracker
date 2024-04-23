@@ -4,3 +4,9 @@
 @import "primeicons/primeicons.css";
 
 @import "primeflex/primeflex.css";
+@import '../node_modules/primeflex/primeflex';
+
+
+html, body {
+    @include styleclass('h-full')
+}

@@ -1,1 +1,17 @@
-<p>home-page works!</p>
+<div class="galleria-container">
+    <p-galleria
+        [autoPlay]="true"
+        [activeIndex]="activeIndex"
+        [circular]="true"
+        [containerStyle]="{ 'max-width': '640px' }"
+        [value]="images"
+        [showThumbnails]="false"
+        [showIndicators]="true"
+        [showItemNavigators]="true"
+        [showItemNavigatorsOnHover]="true"
+    >
+        <ng-template pTemplate="item" let-item>
+            <img [src]="item.src" [alt]="item.alt" class="galleria-content" />
+        </ng-template>
+    </p-galleria>
+</div>

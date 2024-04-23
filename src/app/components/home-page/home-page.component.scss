@@ -1,0 +1,23 @@
+@import '../../../../node_modules/primeflex/primeflex';
+
+:host {
+    @include styleclass('flex flex-column m-4')
+}
+
+.galleria {
+    @include styleclass('flex max-w-10rem');
+
+    &-container {
+        @include styleclass('flex flex-row gap-4 m-auto');
+    }
+
+    &-content {
+        @include styleclass('w-full')
+    }
+
+    &-nav {
+        @include styleclass('flex align-items-center justify-content-cetner');
+    }
+}
+
+

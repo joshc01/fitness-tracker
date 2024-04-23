@@ -1,7 +1,11 @@
 @import 'primeflex/primeflex.scss';
 
+:host {
+    @include styleclass('flex flex-column h-screen')
+}
+
 .toolbar {
-    &-center, &-end {
+    &-center {
         @include styleclass('flex gap-2')
     }
 }

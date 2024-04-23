@@ -23,6 +23,8 @@
         [value]="personalRecords"
         selectionMode="single"
         [(selection)]="selectedExerciseRecord"
+        styleClass="p-datatable-striped"
+        [tableStyle]="{ 'min-width': '50rem' }"
         (onRowSelect)="openDialog($event)"
     >
         <ng-template pTemplate="header">
@@ -37,7 +39,7 @@
 
         <ng-template pTemplate="body" let-personalRecord>
             <tr [pSelectableRow]="personalRecord">
-                <td>{{ personalRecord.name }}</td>
+                <td class="w-20rem">{{ personalRecord.name }}</td>
                 <td>{{ personalRecord.sets }}</td>
                 <td>{{ personalRecord.reps }}</td>
                 <td>{{ personalRecord.weight }}</td>

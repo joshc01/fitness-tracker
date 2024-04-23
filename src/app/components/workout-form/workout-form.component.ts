@@ -97,8 +97,8 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        private _workoutDataService: WorkoutDataService,
         private _messageService: MessageService,
+        private _workoutDataService: WorkoutDataService,
         private _workoutFormService: WorkoutFormService
     ) {
         this.mode$ = this._workoutFormService.getMode$();
@@ -208,10 +208,15 @@ export class WorkoutFormComponent implements OnInit, OnDestroy {
         this._enableTypeAndExercises();
     }
 
-    cancelUpdatedWorkout() {
-        this._exitUpdateMode();
-        this._resetTypeAndExercises();
-        this._showExistingWorkoutAndDisableForm();
+    cancelUpdatedWorkout(mode: Mode | null) {
+        if (mode) {
+            this._resetTypeAndExercises();
+
+            if (mode === Mode.UPDATE) {
+                this._exitUpdateMode();
+                this._showExistingWorkoutAndDisableForm();
+            }
+        }
     }
 
     saveUpdatedWorkout() {

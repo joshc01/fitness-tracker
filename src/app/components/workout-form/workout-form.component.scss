@@ -1,21 +1,52 @@
 @import '../../../../node_modules/primeflex/primeflex';
 
 :host {
-    @include styleclass('flex flex-column m-4')
+    @include styleclass('flex flex-column h-full')
 }
 
-.form {
-    @include styleclass('flex flex-column my-4');
-}
+.workout {
+    &-form {
+        @include styleclass('flex flex-column mt-4 row-gap-4');
 
-.form {
-    @include styleclass('row-gap-6');
+        &-container {
+            @include styleclass('flex flex-column flex-grow-1 m-4');
+        }
+
+        &-header {
+            @include styleclass('flex column-gap-4 justify-content-between');
+        }
+    }
 
     &-calculation {
-        @include styleclass('flex flex-row align-items-center column-gap-2')
+        @include styleclass('flex flex-row align-items-center column-gap-2');
     }
 }
 
-.exercise-form {
-  @include styleclass('flex flex-row mx-auto surface-300 border-round justify-content-center')
+.exercise {
+    &-container {
+        @include styleclass('flex flex-column gap-2 justify-content-center');
+    }
+
+    &-form {
+        @include styleclass('flex flex-row mx-auto surface-300 border-round justify-content-center');
+    }
+
+    &-add-btn {
+        @include styleclass('flex justify-content-center');
+    }
+}
+
+.sticky-bar {
+    @include styleclass('sticky bottom-0 flex flex-end border-round-top');
+
+    background: rgba(220, 220, 220, .5);
+    backdrop-filter: blur(5px);
+
+    &-end {
+        @include styleclass('flex column-gap-2 my-4 ml-auto mr-4');
+
+        & > p-button {
+            @include styleclass('bg-white border-round');
+        }
+    }
 }

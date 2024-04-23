@@ -1,0 +1,5 @@
+@import '../../../../node_modules/primeflex/primeflex';
+
+:host {
+    @include styleclass('flex flex-column m-4')
+}

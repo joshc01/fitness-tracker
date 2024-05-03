@@ -1,5 +1,16 @@
-<div class="card">
-    <p-tabMenu [model]="menuItems" [activeItem]="activeItem" [scrollable]="true"></p-tabMenu>
-</div>
+<div class="container" *ngIf="breakpointState | async as state">
+    <p-tabMenu [model]="menuItems" [activeItem]="activeItem" [scrollable]="!state.breakpoints[xSmall]">
+        <ng-template pTemplate="item" let-menuItem>
+            <a [routerLink]="menuItem.routerLink" class="p-menuitem-link tab-menu-router-link">
+                <div class="tab-menu-cell-content">
+                    <i [class]="menuItem.icon"></i>
+                    <span *ngIf="!state.breakpoints[xSmall]" class="white-space-nowrap">
+                        {{ menuItem.label }}
+                    </span>
+                </div>
+            </a>
+        </ng-template>
+    </p-tabMenu>
 
-<router-outlet></router-outlet>
+    <router-outlet></router-outlet>
+</div>

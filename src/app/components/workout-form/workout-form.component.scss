@@ -9,11 +9,15 @@
         @include styleclass('flex flex-column mt-4 row-gap-4');
 
         &-container {
-            @include styleclass('flex flex-column flex-grow-1 m-4');
+            @include styleclass('flex flex-column flex-grow-1 mt-4');
         }
 
         &-header {
-            @include styleclass('flex column-gap-4 justify-content-between');
+            @include styleclass('flex flex-wrap column-gap-4 row-gap-6 justify-content-center');
+
+            & > * {
+                @include styleclass('w-16rem')
+            }
         }
     }
 
@@ -24,29 +28,50 @@
 
 .exercise {
     &-container {
-        @include styleclass('flex flex-column gap-2 justify-content-center');
+        @include styleclass('flex flex-column mx-auto gap-2 justify-content-center p-4');
     }
 
     &-form {
-        @include styleclass('flex flex-row mx-auto surface-300 border-round justify-content-center');
-    }
+        @include styleclass('flex flex-column surface-300 border-round justify-content-center');
 
-    &-add-btn {
-        @include styleclass('flex justify-content-center');
+        &-add-btn {
+            @include styleclass('flex justify-content-center');
+        }
+
+        &-delete-btn {
+            @include styleclass('flex justify-content-end');
+
+            & > .button {
+                @include styleclass('p-5rem')
+            }
+        }
     }
 }
 
 .sticky-bar {
-    @include styleclass('sticky bottom-0 flex flex-end border-round-top');
+    @include styleclass('sticky bottom-0 flex flex-end border-round-top mx-2');
 
     background: rgba(220, 220, 220, .5);
     backdrop-filter: blur(5px);
 
-    &-end {
-        @include styleclass('flex column-gap-2 my-4 ml-auto mr-4');
+    & > * {
+        @include styleclass('my-4')
+    }
+
+    &-start, &-end {
+        @include styleclass('flex cloumn-gap-2');
 
         & > p-button {
             @include styleclass('bg-white border-round');
         }
+    }
+
+    &-start {
+        @include styleclass('ml-4 mr-auto')
+    }
+
+    &-end {
+        @include styleclass('ml-auto mr-4');
+
     }
 }

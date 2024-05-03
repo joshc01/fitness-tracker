@@ -1,7 +1,7 @@
 @import '../../../../../node_modules/primeflex/primeflex';
 
 .form {
-    @include styleclass('flex flex-column row-gap-6');
+    @include styleclass('flex flex-column row-gap-6 w-full');
 
     &-calculation {
         @include styleclass('flex flex-row align-items-center column-gap-2 ml-0')
@@ -12,7 +12,11 @@
     }
 
     &-number-inputs {
-        @include styleclass('flex flex-row justify-content-between')
+        @include styleclass('flex flex-row gap-6 flex-wrap justify-content-center')
+    }
+
+    &-select-inputs {
+        @include styleclass('flex gap-6 flex-wrap justify-content-center')
     }
 }
 

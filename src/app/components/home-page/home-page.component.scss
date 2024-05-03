@@ -1,7 +1,7 @@
 @import '../../../../node_modules/primeflex/primeflex';
 
 :host {
-    @include styleclass('flex flex-column m-4')
+    @include styleclass('flex flex-column h-full m-4')
 }
 
 .galleria {

@@ -26,23 +26,26 @@
         <div *ngIf="type.valueChanges | async as workoutType" formArrayName="exercises" class="exercise-container">
             <ng-container *ngFor="let exerciseFormGroup of exercises.controls; let i = index">
                 <div id="{{ 'exercise_' + i }}" class="exercise-form">
-                    <app-add-exercise-form
-                        [ngClass]="!showUpdateIcon ? 'p-6 pr-0' : 'p-6'"
-                        [exerciseFormGroup]="exerciseFormGroup"
-                        [selectedWorkoutType]="workoutType"
-                    ></app-add-exercise-form>
-
                     <p-button
-                        icon="pi pi-minus"
-                        *ngIf="!showUpdateIcon"
+                        class="exercise-form-delete-btn"
+                        icon="pi pi-times"
                         [text]="true"
                         [plain]="true"
                         (onClick)="deleteExercise(i)"
+                        [rounded]="true"
+                        size="small"
+                        [disabled]="showUpdateIcon"
                     ></p-button>
+
+                    <app-add-exercise-form
+                        class="mx-5 mb-5"
+                        [exerciseFormGroup]="exerciseFormGroup"
+                        [selectedWorkoutType]="workoutType"
+                    ></app-add-exercise-form>
                 </div>
             </ng-container>
 
-            <div class="exercise-add-btn">
+            <div class="exercise-form-add-btn">
                 <p-button
                     *ngIf="!showUpdateIcon"
                     icon="pi pi-plus"
@@ -59,7 +62,7 @@
 <p-toast></p-toast>
 
 <div class="sticky-bar" *ngIf="mode$ | async as mode">
-    <div class="sticky-bar-end">
+    <div class="sticky-bar-start">
         <p-button
             *ngIf="type"
             [disabled]="mode === Mode.ADD && (type.invalid || selectedWorkout$.value !== null)"
@@ -68,7 +71,9 @@
             (onClick)="cancelUpdatedWorkout(mode)"
             label="Cancel"
         ></p-button>
+    </div>
 
+    <div class="sticky-bar-end">
         <p-button
             *ngIf="!selectedWorkout$.getValue(); else editButton"
             (onClick)="saveNewWorkout()"

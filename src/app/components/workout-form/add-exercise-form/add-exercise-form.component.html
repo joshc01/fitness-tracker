@@ -1,29 +1,33 @@
 <form [formGroup]="exerciseFormGroup" class="form">
-    <span class="p-float-label">
-        <p-dropdown
-            [editable]="true"
-            formControlName="focus"
-            id="focus"
-            inputId="exercise"
-            [options]="focusOptions"
-            [required]="true"
-        />
-        <label for="focus">Select a Focus</label>
-    </span>
-
-    <div class="form-exercise" role="presentation" (click)="showDisabledExerciseMessage()">
+    <div class="form-select-inputs">
         <span class="p-float-label">
             <p-dropdown
+                class="w-full flex"
                 [editable]="true"
-                formControlName="name"
-                id="name"
+                formControlName="focus"
+                id="focus"
                 inputId="exercise"
-                [options]="nameOptions"
+                [options]="focusOptions"
                 [required]="true"
-                spellcheck="false"
             />
-            <label for="name">Select an Exercise</label>
+            <label for="focus">Select a Focus</label>
         </span>
+
+        <div class="form-exercise" role="presentation" (click)="showDisabledExerciseMessage()">
+            <span class="p-float-label">
+                <p-dropdown
+                    class="w-full flex"
+                    [editable]="true"
+                    formControlName="name"
+                    id="name"
+                    inputId="exercise"
+                    [options]="nameOptions"
+                    [required]="true"
+                    spellcheck="false"
+                />
+                <label for="name">Select an Exercise</label>
+            </span>
+        </div>
     </div>
 
     <div class="form-number-inputs">
@@ -69,7 +73,6 @@
                 [required]="true"
                 [showButtons]="true"
                 spellcheck="false"
-                [style]="{ width: '6rem' }"
                 suffix=" lbs"
             ></p-inputNumber>
             <label for="weight">Weight</label>

@@ -10,3 +10,7 @@
 html, body {
     @include styleclass('h-full')
 }
+
+body {
+    @include styleclass('m-0')
+}

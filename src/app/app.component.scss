@@ -1,11 +1,17 @@
 @import 'primeflex/primeflex.scss';
 
-:host {
-    @include styleclass('flex flex-column h-screen')
+:host, .container {
+    @include styleclass('flex flex-column h-full w-full');
 }
 
-.toolbar {
-    &-center {
-        @include styleclass('flex gap-2')
+.tab-menu {
+    &-router-link {
+        @include styleclass('flex justify-content-between align-items-center p-3');
+    }
+
+    &-cell-content {
+        @include styleclass('flex column-gap-2 align-content-center');
     }
 }
+
+
